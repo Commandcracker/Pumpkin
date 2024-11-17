@@ -253,7 +253,7 @@ impl World {
             }
 
             for (key, value) in &ADVANCED_CONFIG.server_links.custom {
-                links.push(Link::new(&Label::TextComponent(TextComponent::text_string(key)), value));
+                links.push(Link::new(&Label::TextComponent(TextComponent::text_string(key.to_string())), value));
             }
 
 
