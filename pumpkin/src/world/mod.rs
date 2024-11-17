@@ -253,7 +253,7 @@ impl World {
             }
 
             for (key, value) in &ADVANCED_CONFIG.server_links.custom {
-                // add
+                links.push(Link::new(&Label::TextComponent(TextComponent::text_string(key)), value));
             }
 
 
