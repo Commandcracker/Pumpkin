@@ -116,6 +116,14 @@ impl PlayerInventory {
         &mut self.items[self.selected + 36 - 9]
     }
 
+    pub fn offhand(&self) -> Option<&ItemStack> {
+        self.offhand.as_ref()
+    }
+
+    pub fn armor(&self) -> &[Option<ItemStack>] {
+        self.armor.as_ref()
+    }
+
     pub fn slots(&self) -> Vec<Option<&ItemStack>> {
         let mut slots = vec![self.crafting_output.as_ref()];
         slots.extend(self.crafting.iter().map(|c| c.as_ref()));

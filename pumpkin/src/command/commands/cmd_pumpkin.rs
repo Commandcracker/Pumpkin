@@ -1,10 +1,3 @@
-use async_trait::async_trait;
-use pumpkin_core::text::click::ClickEvent;
-use pumpkin_core::text::hover::HoverEvent;
-use pumpkin_core::text::{color::NamedColor, TextComponent};
-use pumpkin_protocol::CURRENT_MC_PROTOCOL;
-use std::borrow::Cow;
-
 use crate::{
     command::{
         args::ConsumedArgs, tree::CommandTree, CommandError, CommandExecutor, CommandSender,
@@ -12,6 +5,14 @@ use crate::{
     server::CURRENT_MC_VERSION,
     GIT_VERSION,
 };
+use async_trait::async_trait;
+use pumpkin_core::text::click::ClickEvent;
+use pumpkin_core::text::hover::HoverEvent;
+use pumpkin_core::text::{color::NamedColor, TextComponent};
+use pumpkin_protocol::client::play::{CSetEquipment, Equipment, EquipmentSlot};
+use pumpkin_protocol::slot::Slot;
+use pumpkin_protocol::CURRENT_MC_PROTOCOL;
+use std::borrow::Cow;
 
 const NAMES: [&str; 2] = ["pumpkin", "version"];
 
@@ -30,6 +31,54 @@ impl CommandExecutor for PumpkinExecutor {
         _server: &crate::server::Server,
         _args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
+        let p = sender.as_player().unwrap();
+
+        let mut eq: Vec<Equipment> = Vec::new();
+
+        if let Some(tem) = p
+            .living_entity
+            .inventory
+            .as_ref()
+            .unwrap()
+            .lock()
+            .await
+            .held_item() {
+            eq.push(Equipment::new(EquipmentSlot::MainHand, Slot::from(tem)))
+        }
+
+        if let Some(offhand) = p
+            .living_entity
+            .inventory
+            .as_ref()
+            .unwrap()
+            .lock()
+            .await
+            .offhand() {
+            eq.push(Equipment::new(EquipmentSlot::OffHand, Slot::from(offhand)))
+        }
+
+
+        let lock = p
+            .living_entity
+            .inventory
+            .as_ref()
+            .unwrap()
+            .lock()
+            .await;
+
+        let armors = lock.armor();
+
+
+        /*
+        if let Some(helmet) = armors.get(0) {
+            eq.push(Equipment::new(EquipmentSlot::Helmet, Slot::from(helmet)))
+        }*/
+
+
+        _server
+            .broadcast_packet_all(&CSetEquipment::new(p.entity_id().into(), eq))
+            .await;
+
         sender
             .send_message(
                 TextComponent::text(&format!("Pumpkin {CARGO_PKG_VERSION} ({GIT_VERSION})"))

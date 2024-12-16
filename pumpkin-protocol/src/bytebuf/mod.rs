@@ -5,7 +5,7 @@ use core::str;
 mod deserializer;
 pub use deserializer::DeserializerError;
 pub mod packet_id;
-mod serializer;
+pub mod serializer;
 
 const SEGMENT_BITS: u8 = 0x7F;
 const CONTINUE_BIT: u8 = 0x80;
