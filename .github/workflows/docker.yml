@@ -2,7 +2,7 @@ name: deploy-docker-image
 
 env:
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository | toLower }}
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 
 on:
   push:
@@ -27,6 +27,7 @@ jobs:
         run: |
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          echo "REGISTRY_IMAGE=$(echo ${{ env.REGISTRY_IMAGE }} | awk '{print tolower($0)}')" >> $GITHUB_ENV
 
       - name: Extract Metadata
         id: meta
