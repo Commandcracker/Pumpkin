@@ -2,7 +2,7 @@ name: deploy-docker-image
 
 env:
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 
 on:
   push:
